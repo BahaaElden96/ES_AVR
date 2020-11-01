@@ -1,0 +1,652 @@
+
+my_app.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000320  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000018  00800060  00000320  00000394  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000003ac  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000003dc  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 000000f0  00000000  00000000  00000418  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   0000129d  00000000  00000000  00000508  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 000009a5  00000000  00000000  000017a5  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000008fc  00000000  00000000  0000214a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000198  00000000  00000000  00002a48  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    00000638  00000000  00000000  00002be0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    000009fa  00000000  00000000  00003218  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 000000b0  00000000  00000000  00003c12  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+   8:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+   c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  10:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  14:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  18:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  1c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  20:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  24:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  28:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  2c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  30:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  34:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  38:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  3c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  40:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  44:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  48:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  4c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  50:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+
+00000060 <__do_copy_data>:
+  60:	10 e0       	ldi	r17, 0x00	; 0
+  62:	a0 e6       	ldi	r26, 0x60	; 96
+  64:	b0 e0       	ldi	r27, 0x00	; 0
+  66:	e0 e2       	ldi	r30, 0x20	; 32
+  68:	f3 e0       	ldi	r31, 0x03	; 3
+  6a:	02 c0       	rjmp	.+4      	; 0x70 <__do_copy_data+0x10>
+  6c:	05 90       	lpm	r0, Z+
+  6e:	0d 92       	st	X+, r0
+  70:	a8 37       	cpi	r26, 0x78	; 120
+  72:	b1 07       	cpc	r27, r17
+  74:	d9 f7       	brne	.-10     	; 0x6c <__do_copy_data+0xc>
+  76:	0e 94 5c 01 	call	0x2b8	; 0x2b8 <main>
+  7a:	0c 94 8e 01 	jmp	0x31c	; 0x31c <_exit>
+
+0000007e <__bad_interrupt>:
+  7e:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+00000082 <button_init>:
+ *  Author: bahaa
+ */ 
+#include "HAL_BUT.h"
+ret_status button_init(button_t *btn){
+	ret_status ret=R_NOK;
+	if((NULL == btn || (btn->port_name>PORT_MAX_NUMBERS-1) ||(btn->pin >PORT_PIN_MAX_NUMBERS-1))){
+  82:	00 97       	sbiw	r24, 0x00	; 0
+  84:	79 f0       	breq	.+30     	; 0xa4 <button_init+0x22>
+  86:	fc 01       	movw	r30, r24
+  88:	20 81       	ld	r18, Z
+  8a:	2f 70       	andi	r18, 0x0F	; 15
+  8c:	25 30       	cpi	r18, 0x05	; 5
+  8e:	60 f4       	brcc	.+24     	; 0xa8 <button_init+0x26>
+	return ret;
+	}else{
+	pin_direction_init(btn->port_name,btn->pin,DIRECTION_INPUT);
+  90:	60 81       	ld	r22, Z
+  92:	62 95       	swap	r22
+  94:	6f 70       	andi	r22, 0x0F	; 15
+  96:	67 70       	andi	r22, 0x07	; 7
+  98:	40 e0       	ldi	r20, 0x00	; 0
+  9a:	82 2f       	mov	r24, r18
+  9c:	0e 94 cb 00 	call	0x196	; 0x196 <pin_direction_init>
+	ret =R_OK;
+	}
+	return ret;
+  a0:	81 e0       	ldi	r24, 0x01	; 1
+  a2:	08 95       	ret
+ */ 
+#include "HAL_BUT.h"
+ret_status button_init(button_t *btn){
+	ret_status ret=R_NOK;
+	if((NULL == btn || (btn->port_name>PORT_MAX_NUMBERS-1) ||(btn->pin >PORT_PIN_MAX_NUMBERS-1))){
+	return ret;
+  a4:	80 e0       	ldi	r24, 0x00	; 0
+  a6:	08 95       	ret
+  a8:	80 e0       	ldi	r24, 0x00	; 0
+	}else{
+	pin_direction_init(btn->port_name,btn->pin,DIRECTION_INPUT);
+	ret =R_OK;
+	}
+	return ret;
+}
+  aa:	08 95       	ret
+
+000000ac <button_get_status>:
+ret_status button_get_status(button_t *btn, button_status *bstatus){
+  ac:	cf 93       	push	r28
+  ae:	df 93       	push	r29
+		ret_status ret=R_NOK;
+		if( (NULL == btn) || (btn->port_name>PORT_MAX_NUMBERS-1) ||(btn->pin >PORT_PIN_MAX_NUMBERS-1) ){
+  b0:	00 97       	sbiw	r24, 0x00	; 0
+  b2:	b1 f0       	breq	.+44     	; 0xe0 <button_get_status+0x34>
+  b4:	fc 01       	movw	r30, r24
+  b6:	20 81       	ld	r18, Z
+  b8:	2f 70       	andi	r18, 0x0F	; 15
+  ba:	25 30       	cpi	r18, 0x05	; 5
+  bc:	98 f4       	brcc	.+38     	; 0xe4 <button_get_status+0x38>
+  be:	ab 01       	movw	r20, r22
+  c0:	ec 01       	movw	r28, r24
+			return ret;
+			}else{
+				pin_logic_t *p;
+pin_read_value(btn->port_name,btn->pin,bstatus);
+  c2:	60 81       	ld	r22, Z
+  c4:	62 95       	swap	r22
+  c6:	6f 70       	andi	r22, 0x0F	; 15
+  c8:	67 70       	andi	r22, 0x07	; 7
+  ca:	82 2f       	mov	r24, r18
+  cc:	0e 94 3f 01 	call	0x27e	; 0x27e <pin_read_value>
+//*bstatus=*p;
+btn->button_status=*p;
+  d0:	88 81       	ld	r24, Y
+  d2:	90 91 00 00 	lds	r25, 0x0000	; 0x800000 <__TEXT_REGION_LENGTH__+0x7e0000>
+  d6:	90 fb       	bst	r25, 0
+  d8:	87 f9       	bld	r24, 7
+  da:	88 83       	st	Y, r24
+			ret =R_OK;
+		}
+		return ret;
+  dc:	81 e0       	ldi	r24, 0x01	; 1
+  de:	03 c0       	rjmp	.+6      	; 0xe6 <button_get_status+0x3a>
+	return ret;
+}
+ret_status button_get_status(button_t *btn, button_status *bstatus){
+		ret_status ret=R_NOK;
+		if( (NULL == btn) || (btn->port_name>PORT_MAX_NUMBERS-1) ||(btn->pin >PORT_PIN_MAX_NUMBERS-1) ){
+			return ret;
+  e0:	80 e0       	ldi	r24, 0x00	; 0
+  e2:	01 c0       	rjmp	.+2      	; 0xe6 <button_get_status+0x3a>
+  e4:	80 e0       	ldi	r24, 0x00	; 0
+//*bstatus=*p;
+btn->button_status=*p;
+			ret =R_OK;
+		}
+		return ret;
+  e6:	df 91       	pop	r29
+  e8:	cf 91       	pop	r28
+  ea:	08 95       	ret
+
+000000ec <led_init>:
+ *  Author: bahaa
+ */ 
+#include "HAL_LED.h"
+
+
+ret_status led_init(led_t *led){
+  ec:	cf 93       	push	r28
+  ee:	df 93       	push	r29
+  f0:	fc 01       	movw	r30, r24
+	ret_status ret=R_NOK;
+	if(led == NULL || led->port_info.port_name > PORT_MAX_NUMBERS || led->port_info.pin > PORT_PIN_MAX_NUMBERS){
+  f2:	89 2b       	or	r24, r25
+  f4:	b9 f0       	breq	.+46     	; 0x124 <led_init+0x38>
+  f6:	80 81       	ld	r24, Z
+  f8:	8f 70       	andi	r24, 0x0F	; 15
+  fa:	86 30       	cpi	r24, 0x06	; 6
+  fc:	a8 f4       	brcc	.+42     	; 0x128 <led_init+0x3c>
+  fe:	60 81       	ld	r22, Z
+ 100:	62 95       	swap	r22
+ 102:	6f 70       	andi	r22, 0x0F	; 15
+ 104:	69 30       	cpi	r22, 0x09	; 9
+ 106:	90 f4       	brcc	.+36     	; 0x12c <led_init+0x40>
+ 108:	ef 01       	movw	r28, r30
+		
+		return ret;
+	}else{
+		pin_direction_init(led->port_info.port_name,led->port_info.pin,DIRECTION_OUTPUT);
+ 10a:	41 e0       	ldi	r20, 0x01	; 1
+ 10c:	0e 94 cb 00 	call	0x196	; 0x196 <pin_direction_init>
+		pin_write_value(led->port_info.port_name,led->port_info.pin,PIN_LOW);
+ 110:	88 81       	ld	r24, Y
+ 112:	68 2f       	mov	r22, r24
+ 114:	62 95       	swap	r22
+ 116:	6f 70       	andi	r22, 0x0F	; 15
+ 118:	40 e0       	ldi	r20, 0x00	; 0
+ 11a:	8f 70       	andi	r24, 0x0F	; 15
+ 11c:	0e 94 05 01 	call	0x20a	; 0x20a <pin_write_value>
+		ret = R_OK;
+	}
+	return ret;
+ 120:	81 e0       	ldi	r24, 0x01	; 1
+ 122:	05 c0       	rjmp	.+10     	; 0x12e <led_init+0x42>
+
+ret_status led_init(led_t *led){
+	ret_status ret=R_NOK;
+	if(led == NULL || led->port_info.port_name > PORT_MAX_NUMBERS || led->port_info.pin > PORT_PIN_MAX_NUMBERS){
+		
+		return ret;
+ 124:	80 e0       	ldi	r24, 0x00	; 0
+ 126:	03 c0       	rjmp	.+6      	; 0x12e <led_init+0x42>
+ 128:	80 e0       	ldi	r24, 0x00	; 0
+ 12a:	01 c0       	rjmp	.+2      	; 0x12e <led_init+0x42>
+ 12c:	80 e0       	ldi	r24, 0x00	; 0
+		pin_direction_init(led->port_info.port_name,led->port_info.pin,DIRECTION_OUTPUT);
+		pin_write_value(led->port_info.port_name,led->port_info.pin,PIN_LOW);
+		ret = R_OK;
+	}
+	return ret;
+}
+ 12e:	df 91       	pop	r29
+ 130:	cf 91       	pop	r28
+ 132:	08 95       	ret
+
+00000134 <led_turn_on>:
+ret_status led_turn_on(led_t *led){
+ 134:	fc 01       	movw	r30, r24
+		ret_status ret=R_NOK;
+		if(led == NULL || led->port_info.port_name > PORT_MAX_NUMBERS || led->port_info.pin > PORT_PIN_MAX_NUMBERS){
+ 136:	89 2b       	or	r24, r25
+ 138:	81 f0       	breq	.+32     	; 0x15a <led_turn_on+0x26>
+ 13a:	80 81       	ld	r24, Z
+ 13c:	8f 70       	andi	r24, 0x0F	; 15
+ 13e:	86 30       	cpi	r24, 0x06	; 6
+ 140:	70 f4       	brcc	.+28     	; 0x15e <led_turn_on+0x2a>
+ 142:	60 81       	ld	r22, Z
+ 144:	62 95       	swap	r22
+ 146:	6f 70       	andi	r22, 0x0F	; 15
+ 148:	69 30       	cpi	r22, 0x09	; 9
+ 14a:	58 f4       	brcc	.+22     	; 0x162 <led_turn_on+0x2e>
+			return ret;
+			}else{
+				led->led_status=LED_ON;
+ 14c:	91 e0       	ldi	r25, 0x01	; 1
+ 14e:	91 83       	std	Z+1, r25	; 0x01
+				pin_write_value(led->port_info.port_name,led->port_info.pin,PIN_HIGH);
+ 150:	41 e0       	ldi	r20, 0x01	; 1
+ 152:	0e 94 05 01 	call	0x20a	; 0x20a <pin_write_value>
+				ret=R_OK;
+			}
+			return ret;
+ 156:	81 e0       	ldi	r24, 0x01	; 1
+ 158:	08 95       	ret
+	return ret;
+}
+ret_status led_turn_on(led_t *led){
+		ret_status ret=R_NOK;
+		if(led == NULL || led->port_info.port_name > PORT_MAX_NUMBERS || led->port_info.pin > PORT_PIN_MAX_NUMBERS){
+			return ret;
+ 15a:	80 e0       	ldi	r24, 0x00	; 0
+ 15c:	08 95       	ret
+ 15e:	80 e0       	ldi	r24, 0x00	; 0
+ 160:	08 95       	ret
+ 162:	80 e0       	ldi	r24, 0x00	; 0
+				led->led_status=LED_ON;
+				pin_write_value(led->port_info.port_name,led->port_info.pin,PIN_HIGH);
+				ret=R_OK;
+			}
+			return ret;
+}
+ 164:	08 95       	ret
+
+00000166 <led_turn_off>:
+ret_status led_turn_off(led_t *led){
+ 166:	fc 01       	movw	r30, r24
+		ret_status ret=R_NOK;
+		if(led == NULL || led->port_info.port_name > PORT_MAX_NUMBERS || led->port_info.pin > PORT_PIN_MAX_NUMBERS){
+ 168:	89 2b       	or	r24, r25
+ 16a:	79 f0       	breq	.+30     	; 0x18a <led_turn_off+0x24>
+ 16c:	80 81       	ld	r24, Z
+ 16e:	8f 70       	andi	r24, 0x0F	; 15
+ 170:	86 30       	cpi	r24, 0x06	; 6
+ 172:	68 f4       	brcc	.+26     	; 0x18e <led_turn_off+0x28>
+ 174:	60 81       	ld	r22, Z
+ 176:	62 95       	swap	r22
+ 178:	6f 70       	andi	r22, 0x0F	; 15
+ 17a:	69 30       	cpi	r22, 0x09	; 9
+ 17c:	50 f4       	brcc	.+20     	; 0x192 <led_turn_off+0x2c>
+			return ret;
+			}else{
+				led->led_status=LED_OFF;
+ 17e:	11 82       	std	Z+1, r1	; 0x01
+			pin_write_value(led->port_info.port_name,led->port_info.pin,PIN_LOW);
+ 180:	40 e0       	ldi	r20, 0x00	; 0
+ 182:	0e 94 05 01 	call	0x20a	; 0x20a <pin_write_value>
+			ret=R_OK;
+		}
+		return ret;
+ 186:	81 e0       	ldi	r24, 0x01	; 1
+ 188:	08 95       	ret
+			return ret;
+}
+ret_status led_turn_off(led_t *led){
+		ret_status ret=R_NOK;
+		if(led == NULL || led->port_info.port_name > PORT_MAX_NUMBERS || led->port_info.pin > PORT_PIN_MAX_NUMBERS){
+			return ret;
+ 18a:	80 e0       	ldi	r24, 0x00	; 0
+ 18c:	08 95       	ret
+ 18e:	80 e0       	ldi	r24, 0x00	; 0
+ 190:	08 95       	ret
+ 192:	80 e0       	ldi	r24, 0x00	; 0
+				led->led_status=LED_OFF;
+			pin_write_value(led->port_info.port_name,led->port_info.pin,PIN_LOW);
+			ret=R_OK;
+		}
+		return ret;
+}
+ 194:	08 95       	ret
+
+00000196 <pin_direction_init>:
+	}else{
+			*dir=GET_BIT(*ddr_registers[port],pin);
+			ret=R_OK;
+	}
+	return ret;
+}
+ 196:	85 30       	cpi	r24, 0x05	; 5
+ 198:	90 f5       	brcc	.+100    	; 0x1fe <pin_direction_init+0x68>
+ 19a:	68 30       	cpi	r22, 0x08	; 8
+ 19c:	90 f5       	brcc	.+100    	; 0x202 <pin_direction_init+0x6c>
+ 19e:	44 23       	and	r20, r20
+ 1a0:	19 f0       	breq	.+6      	; 0x1a8 <pin_direction_init+0x12>
+ 1a2:	41 30       	cpi	r20, 0x01	; 1
+ 1a4:	b9 f0       	breq	.+46     	; 0x1d4 <pin_direction_init+0x3e>
+ 1a6:	2f c0       	rjmp	.+94     	; 0x206 <pin_direction_init+0x70>
+ 1a8:	e8 2f       	mov	r30, r24
+ 1aa:	f0 e0       	ldi	r31, 0x00	; 0
+ 1ac:	ee 0f       	add	r30, r30
+ 1ae:	ff 1f       	adc	r31, r31
+ 1b0:	e0 59       	subi	r30, 0x90	; 144
+ 1b2:	ff 4f       	sbci	r31, 0xFF	; 255
+ 1b4:	01 90       	ld	r0, Z+
+ 1b6:	f0 81       	ld	r31, Z
+ 1b8:	e0 2d       	mov	r30, r0
+ 1ba:	20 81       	ld	r18, Z
+ 1bc:	81 e0       	ldi	r24, 0x01	; 1
+ 1be:	90 e0       	ldi	r25, 0x00	; 0
+ 1c0:	02 c0       	rjmp	.+4      	; 0x1c6 <pin_direction_init+0x30>
+ 1c2:	88 0f       	add	r24, r24
+ 1c4:	99 1f       	adc	r25, r25
+ 1c6:	6a 95       	dec	r22
+ 1c8:	e2 f7       	brpl	.-8      	; 0x1c2 <pin_direction_init+0x2c>
+ 1ca:	80 95       	com	r24
+ 1cc:	82 23       	and	r24, r18
+ 1ce:	80 83       	st	Z, r24
+ 1d0:	81 e0       	ldi	r24, 0x01	; 1
+ 1d2:	08 95       	ret
+ 1d4:	e8 2f       	mov	r30, r24
+ 1d6:	f0 e0       	ldi	r31, 0x00	; 0
+ 1d8:	ee 0f       	add	r30, r30
+ 1da:	ff 1f       	adc	r31, r31
+ 1dc:	e0 59       	subi	r30, 0x90	; 144
+ 1de:	ff 4f       	sbci	r31, 0xFF	; 255
+ 1e0:	01 90       	ld	r0, Z+
+ 1e2:	f0 81       	ld	r31, Z
+ 1e4:	e0 2d       	mov	r30, r0
+ 1e6:	20 81       	ld	r18, Z
+ 1e8:	81 e0       	ldi	r24, 0x01	; 1
+ 1ea:	90 e0       	ldi	r25, 0x00	; 0
+ 1ec:	02 c0       	rjmp	.+4      	; 0x1f2 <pin_direction_init+0x5c>
+ 1ee:	88 0f       	add	r24, r24
+ 1f0:	99 1f       	adc	r25, r25
+ 1f2:	6a 95       	dec	r22
+ 1f4:	e2 f7       	brpl	.-8      	; 0x1ee <pin_direction_init+0x58>
+ 1f6:	82 2b       	or	r24, r18
+ 1f8:	80 83       	st	Z, r24
+ 1fa:	81 e0       	ldi	r24, 0x01	; 1
+ 1fc:	08 95       	ret
+ 1fe:	80 e0       	ldi	r24, 0x00	; 0
+ 200:	08 95       	ret
+ 202:	80 e0       	ldi	r24, 0x00	; 0
+ 204:	08 95       	ret
+ 206:	80 e0       	ldi	r24, 0x00	; 0
+ 208:	08 95       	ret
+
+0000020a <pin_write_value>:
+
+
+
+ret_status pin_write_value(port_index port,pin_index pin ,pin_logic_t logic_value){
+		ret_status ret=R_NOK;
+		if ( port <ZERO_INIT || port > PORT_MAX_NUMBERS - 1 || pin <ZERO_INIT || pin > PORT_PIN_MAX_NUMBERS -1)
+ 20a:	85 30       	cpi	r24, 0x05	; 5
+ 20c:	90 f5       	brcc	.+100    	; 0x272 <pin_write_value+0x68>
+ 20e:	68 30       	cpi	r22, 0x08	; 8
+ 210:	90 f5       	brcc	.+100    	; 0x276 <pin_write_value+0x6c>
+		{
+			return ret;
+			}else{
+			switch(logic_value){
+ 212:	44 23       	and	r20, r20
+ 214:	19 f0       	breq	.+6      	; 0x21c <pin_write_value+0x12>
+ 216:	41 30       	cpi	r20, 0x01	; 1
+ 218:	b9 f0       	breq	.+46     	; 0x248 <pin_write_value+0x3e>
+ 21a:	2f c0       	rjmp	.+94     	; 0x27a <pin_write_value+0x70>
+				case PIN_LOW:
+				CLR_BIT(*out_port_registers[port],pin);
+ 21c:	e8 2f       	mov	r30, r24
+ 21e:	f0 e0       	ldi	r31, 0x00	; 0
+ 220:	ee 0f       	add	r30, r30
+ 222:	ff 1f       	adc	r31, r31
+ 224:	e8 59       	subi	r30, 0x98	; 152
+ 226:	ff 4f       	sbci	r31, 0xFF	; 255
+ 228:	01 90       	ld	r0, Z+
+ 22a:	f0 81       	ld	r31, Z
+ 22c:	e0 2d       	mov	r30, r0
+ 22e:	20 81       	ld	r18, Z
+ 230:	81 e0       	ldi	r24, 0x01	; 1
+ 232:	90 e0       	ldi	r25, 0x00	; 0
+ 234:	02 c0       	rjmp	.+4      	; 0x23a <pin_write_value+0x30>
+ 236:	88 0f       	add	r24, r24
+ 238:	99 1f       	adc	r25, r25
+ 23a:	6a 95       	dec	r22
+ 23c:	e2 f7       	brpl	.-8      	; 0x236 <pin_write_value+0x2c>
+ 23e:	80 95       	com	r24
+ 240:	82 23       	and	r24, r18
+ 242:	80 83       	st	Z, r24
+				SET_BIT(*out_port_registers[port],pin);
+			break;
+			}
+			ret=R_OK;
+		}
+		return ret;	
+ 244:	81 e0       	ldi	r24, 0x01	; 1
+			return ret;
+			}else{
+			switch(logic_value){
+				case PIN_LOW:
+				CLR_BIT(*out_port_registers[port],pin);
+				break;
+ 246:	08 95       	ret
+			case PIN_HIGH:
+				SET_BIT(*out_port_registers[port],pin);
+ 248:	e8 2f       	mov	r30, r24
+ 24a:	f0 e0       	ldi	r31, 0x00	; 0
+ 24c:	ee 0f       	add	r30, r30
+ 24e:	ff 1f       	adc	r31, r31
+ 250:	e8 59       	subi	r30, 0x98	; 152
+ 252:	ff 4f       	sbci	r31, 0xFF	; 255
+ 254:	01 90       	ld	r0, Z+
+ 256:	f0 81       	ld	r31, Z
+ 258:	e0 2d       	mov	r30, r0
+ 25a:	20 81       	ld	r18, Z
+ 25c:	81 e0       	ldi	r24, 0x01	; 1
+ 25e:	90 e0       	ldi	r25, 0x00	; 0
+ 260:	02 c0       	rjmp	.+4      	; 0x266 <pin_write_value+0x5c>
+ 262:	88 0f       	add	r24, r24
+ 264:	99 1f       	adc	r25, r25
+ 266:	6a 95       	dec	r22
+ 268:	e2 f7       	brpl	.-8      	; 0x262 <pin_write_value+0x58>
+ 26a:	82 2b       	or	r24, r18
+ 26c:	80 83       	st	Z, r24
+			break;
+			}
+			ret=R_OK;
+		}
+		return ret;	
+ 26e:	81 e0       	ldi	r24, 0x01	; 1
+				case PIN_LOW:
+				CLR_BIT(*out_port_registers[port],pin);
+				break;
+			case PIN_HIGH:
+				SET_BIT(*out_port_registers[port],pin);
+			break;
+ 270:	08 95       	ret
+
+ret_status pin_write_value(port_index port,pin_index pin ,pin_logic_t logic_value){
+		ret_status ret=R_NOK;
+		if ( port <ZERO_INIT || port > PORT_MAX_NUMBERS - 1 || pin <ZERO_INIT || pin > PORT_PIN_MAX_NUMBERS -1)
+		{
+			return ret;
+ 272:	80 e0       	ldi	r24, 0x00	; 0
+ 274:	08 95       	ret
+ 276:	80 e0       	ldi	r24, 0x00	; 0
+ 278:	08 95       	ret
+				SET_BIT(*out_port_registers[port],pin);
+			break;
+			}
+			ret=R_OK;
+		}
+		return ret;	
+ 27a:	81 e0       	ldi	r24, 0x01	; 1
+}
+ 27c:	08 95       	ret
+
+0000027e <pin_read_value>:
+ret_status pin_read_value(port_index port ,pin_index pin,pin_logic_t *logic_value){
+ret_status ret=R_NOK;
+if ( port <ZERO_INIT || port > PORT_MAX_NUMBERS - 1 || pin <ZERO_INIT || pin > PORT_PIN_MAX_NUMBERS -1 )
+ 27e:	85 30       	cpi	r24, 0x05	; 5
+ 280:	b8 f4       	brcc	.+46     	; 0x2b0 <pin_read_value+0x32>
+ 282:	68 30       	cpi	r22, 0x08	; 8
+ 284:	b8 f4       	brcc	.+46     	; 0x2b4 <pin_read_value+0x36>
+{
+	return ret;
+  }else
+  {
+	*logic_value=GET_BIT(*input_pin_registers[port],pin);
+ 286:	e8 2f       	mov	r30, r24
+ 288:	f0 e0       	ldi	r31, 0x00	; 0
+ 28a:	ee 0f       	add	r30, r30
+ 28c:	ff 1f       	adc	r31, r31
+ 28e:	e0 5a       	subi	r30, 0xA0	; 160
+ 290:	ff 4f       	sbci	r31, 0xFF	; 255
+ 292:	01 90       	ld	r0, Z+
+ 294:	f0 81       	ld	r31, Z
+ 296:	e0 2d       	mov	r30, r0
+ 298:	80 81       	ld	r24, Z
+ 29a:	90 e0       	ldi	r25, 0x00	; 0
+ 29c:	02 c0       	rjmp	.+4      	; 0x2a2 <pin_read_value+0x24>
+ 29e:	95 95       	asr	r25
+ 2a0:	87 95       	ror	r24
+ 2a2:	6a 95       	dec	r22
+ 2a4:	e2 f7       	brpl	.-8      	; 0x29e <pin_read_value+0x20>
+ 2a6:	81 70       	andi	r24, 0x01	; 1
+ 2a8:	fa 01       	movw	r30, r20
+ 2aa:	80 83       	st	Z, r24
+	ret=R_OK;
+   }
+return ret;
+ 2ac:	81 e0       	ldi	r24, 0x01	; 1
+ 2ae:	08 95       	ret
+}
+ret_status pin_read_value(port_index port ,pin_index pin,pin_logic_t *logic_value){
+ret_status ret=R_NOK;
+if ( port <ZERO_INIT || port > PORT_MAX_NUMBERS - 1 || pin <ZERO_INIT || pin > PORT_PIN_MAX_NUMBERS -1 )
+{
+	return ret;
+ 2b0:	80 e0       	ldi	r24, 0x00	; 0
+ 2b2:	08 95       	ret
+ 2b4:	80 e0       	ldi	r24, 0x00	; 0
+  {
+	*logic_value=GET_BIT(*input_pin_registers[port],pin);
+	ret=R_OK;
+   }
+return ret;
+}
+ 2b6:	08 95       	ret
+
+000002b8 <main>:
+
+#include "myapp.h"
+//#include "util/delay.h"
+
+int main(void)
+{
+ 2b8:	cf 93       	push	r28
+ 2ba:	df 93       	push	r29
+ 2bc:	00 d0       	rcall	.+0      	; 0x2be <main+0x6>
+ 2be:	00 d0       	rcall	.+0      	; 0x2c0 <main+0x8>
+ 2c0:	cd b7       	in	r28, 0x3d	; 61
+ 2c2:	de b7       	in	r29, 0x3e	; 62
+    /* Replace with your application code */
+led_t led1={.port_info.port_name=PORTB_INDEX,.port_info.pin=PIN2,.led_status=LED_OFF};
+ 2c4:	81 e2       	ldi	r24, 0x21	; 33
+ 2c6:	89 83       	std	Y+1, r24	; 0x01
+ 2c8:	1a 82       	std	Y+2, r1	; 0x02
+	button_t btn1={.port_name=PORTD_INDEX,.pin=PIN0,.button_status=BUTTON_NOT_PRESSED};
+ 2ca:	8b 81       	ldd	r24, Y+3	; 0x03
+ 2cc:	80 78       	andi	r24, 0x80	; 128
+ 2ce:	83 60       	ori	r24, 0x03	; 3
+ 2d0:	8f 77       	andi	r24, 0x7F	; 127
+ 2d2:	8b 83       	std	Y+3, r24	; 0x03
+		led_init(&led1);
+ 2d4:	ce 01       	movw	r24, r28
+ 2d6:	01 96       	adiw	r24, 0x01	; 1
+ 2d8:	0e 94 76 00 	call	0xec	; 0xec <led_init>
+		button_init(&btn1);
+ 2dc:	ce 01       	movw	r24, r28
+ 2de:	03 96       	adiw	r24, 0x03	; 3
+ 2e0:	0e 94 41 00 	call	0x82	; 0x82 <button_init>
+		button_status bstate;
+    while (1) 
+    {
+		button_get_status(&btn1,&bstate);
+ 2e4:	be 01       	movw	r22, r28
+ 2e6:	6c 5f       	subi	r22, 0xFC	; 252
+ 2e8:	7f 4f       	sbci	r23, 0xFF	; 255
+ 2ea:	ce 01       	movw	r24, r28
+ 2ec:	03 96       	adiw	r24, 0x03	; 3
+ 2ee:	0e 94 56 00 	call	0xac	; 0xac <button_get_status>
+		if(bstate == BUTTON_PRESSED){
+ 2f2:	8c 81       	ldd	r24, Y+4	; 0x04
+ 2f4:	81 30       	cpi	r24, 0x01	; 1
+ 2f6:	69 f4       	brne	.+26     	; 0x312 <main+0x5a>
+led_turn_on(&led1);
+ 2f8:	ce 01       	movw	r24, r28
+ 2fa:	01 96       	adiw	r24, 0x01	; 1
+ 2fc:	0e 94 9a 00 	call	0x134	; 0x134 <led_turn_on>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 300:	2f e9       	ldi	r18, 0x9F	; 159
+ 302:	86 e8       	ldi	r24, 0x86	; 134
+ 304:	91 e0       	ldi	r25, 0x01	; 1
+ 306:	21 50       	subi	r18, 0x01	; 1
+ 308:	80 40       	sbci	r24, 0x00	; 0
+ 30a:	90 40       	sbci	r25, 0x00	; 0
+ 30c:	e1 f7       	brne	.-8      	; 0x306 <main+0x4e>
+ 30e:	00 c0       	rjmp	.+0      	; 0x310 <main+0x58>
+ 310:	00 00       	nop
+_delay_ms(500);
+		}
+led_turn_off(&led1);
+ 312:	ce 01       	movw	r24, r28
+ 314:	01 96       	adiw	r24, 0x01	; 1
+ 316:	0e 94 b3 00 	call	0x166	; 0x166 <led_turn_off>
+		
+	
+    }
+ 31a:	e4 cf       	rjmp	.-56     	; 0x2e4 <main+0x2c>
+
+0000031c <_exit>:
+ 31c:	f8 94       	cli
+
+0000031e <__stop_program>:
+ 31e:	ff cf       	rjmp	.-2      	; 0x31e <__stop_program>
